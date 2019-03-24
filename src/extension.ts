@@ -3,8 +3,8 @@
 import * as vscode from 'vscode';
 
 var fs = require('fs');
-//var file = "C:\\Users\\Lenovo\\hellocode\\out\\words.json";
-var file = "./words.json";
+var file = "C:\\Users\\Lenovo\\hellocode\\out\\words.json";
+//var file = "./words.json";
 var WORDS = JSON.parse(fs.readFileSync( file));
 
 var wordsum = 0;
@@ -20,14 +20,14 @@ function correction(word:any){
 	var ans = "";
 	var p = -1;
 	var temp = candidates(word);
-	console.log("1" in temp);
-	for (var w in temp){if (P(temp[w])>p){console.log(temp[w]);ans = temp[w]; p=P(w);}}
+	//console.log(temp);
+	for (var w in temp){if (P(temp[w])>p){//console.log(temp[w]);
+		ans = temp[w]; p=P(w);}}
 	return ans;
 }
 
 function candidates(word:any){
 	"Generate possible spelling corrections for word."
-	console.log(word);
 	if (known([word]).length>0){return [word];}
 	else if(known(edits1(word)).length>0){return known(edits1(word));}
 	else if(known(edits2(word)).length>0){return known(edits2(word));}
@@ -71,15 +71,17 @@ function edits1(word:any){
 	return (deletes.concat(transposes).concat(replaces).concat(inserts));
 }
 
-function edits2(word:any){
-	"All edits that are two edits away from `word`."
-	var ans = [];
-	for (var e1 in edits1(word)){
-		for (var e2 in edits1(e1)){
-			ans.push(e2);
-		}
-	}
-	return ans;
+function edits2(word:any) {
+    "All edits that are two edits away from `word`.";
+    var ans = [];
+    var ed1 = edits1(word);
+    for (var e1 in ed1) {
+        var ed2 = edits1(ed1[e1]);
+        for (var e2 in ed2) {
+            ans.push(ed2[e2]);
+        }
+    }
+    return ans;
 }
 
 function sentenceprocess(s:any){
@@ -119,7 +121,6 @@ export function activate(context: vscode.ExtensionContext) {
 	editor.edit(editBuilder => {editBuilder.replace(selection, sentenceprocess(text))});
 	vscode.window.showInformationMessage('Corrected result: ' + sentenceprocess(text));
 	});
-	console.log(vscode.workspace.workspaceFolders);
 
 	context.subscriptions.push(disposable);
 }

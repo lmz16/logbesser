@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
 var fs = require('fs');
-//var file = "C:\\Users\\Lenovo\\hellocode\\out\\words.json";
-var file = "./words.json";
+var file = "C:\\Users\\Lenovo\\hellocode\\out\\words.json";
+//var file = "./words.json";
 var WORDS = JSON.parse(fs.readFileSync(file));
 var wordsum = 0;
 for (var key in WORDS) {
@@ -20,10 +20,8 @@ function correction(word) {
     var ans = "";
     var p = -1;
     var temp = candidates(word);
-    console.log("1" in temp);
     for (var w in temp) {
-        if (P(temp[w]) > p) {
-            console.log(temp[w]);
+        if (!(P(temp[w]) < p)) {
             ans = temp[w];
             p = P(w);
         }
@@ -32,7 +30,6 @@ function correction(word) {
 }
 function candidates(word) {
     "Generate possible spelling corrections for word.";
-    console.log(word);
     if (known([word]).length > 0) {
         return [word];
     }
@@ -90,9 +87,11 @@ function edits1(word) {
 function edits2(word) {
     "All edits that are two edits away from `word`.";
     var ans = [];
-    for (var e1 in edits1(word)) {
-        for (var e2 in edits1(e1)) {
-            ans.push(e2);
+    var ed1 = edits1(word);
+    for (var e1 in ed1) {
+        var ed2 = edits1(ed1[e1]);
+        for (var e2 in ed2) {
+            ans.push(ed2[e2]);
         }
     }
     return ans;
@@ -134,7 +133,6 @@ function activate(context) {
         editor.edit(editBuilder => { editBuilder.replace(selection, sentenceprocess(text)); });
         vscode.window.showInformationMessage('Corrected result: ' + sentenceprocess(text));
     });
-    console.log(vscode.workspace.workspaceFolders);
     context.subscriptions.push(disposable);
 }
 exports.activate = activate;
