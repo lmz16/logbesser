@@ -4,7 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
 var fs = require('fs');
-var file = "C:\\Users\\Lenovo\\hellocode\\out\\words.json";
+var file = __dirname+"\\words.json";
+console.log(file);
 //var file = "./words.json";
 var WORDS = JSON.parse(fs.readFileSync(file));
 var wordsum = 0;
